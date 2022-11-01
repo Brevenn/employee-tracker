@@ -29,38 +29,38 @@ function start() {
                 name: "beginningOptions",
                 message: "What would you like to do?",
                 choices: [
-                    "Add New Character Type",
-                    "Add New Character Role",
-                    "Add New Character",
-                    "View all Character Types",
-                    "View all Character Roles",
-                    "View all Characters",
-                    "Change the Role of a Character",
+                    "Add New Department Type",
+                    "Add New Department Role",
+                    "Add New Department",
+                    "View all Department Types",
+                    "View all Department Roles",
+                    "View all Departments",
+                    "Change the Role of a Department",
                     "Exit Simulation"
                 ]
             }
         ])
         .then(answers => {
             switch(answers.beginningOptions) {
-                case "Add New Character Type":
+                case "Add New Department Type":
                     addCharType();
                     break;
-                case "Add New Character Role":
+                case "Add New Department Role":
                     addCharRole();
                     break;
-                case "Add New Character":
+                case "Add New Department":
                     addNewChar();
                     break;
-                case "View All Character Types":
+                case "View All Department Types":
                     viewCharTypes();
                     break;
-                case "View All Character Roles":
+                case "View All Department Roles":
                     viewCharRoles();
                     break;
-                case "View All Characters":
+                case "View All Departments":
                     viewAllChar();
                     break;
-                case "Change the Role of a Character":
+                case "Change the Role of a Department":
                     changeRole();
                     break;
                 default:
@@ -92,3 +92,22 @@ function addCharType() {
         );
     });
 };
+
+// Create a function to add roles to the employee_role database.
+function addCharRole() {
+    let departmentName = []
+
+    promisemysql.createConnection(connectPack)
+    .then((dbconnection) => {
+        return Promise.all([
+            dbconnection.query("SELECT * FROM department"),
+        ]);
+
+    })
+    .then(([department]) => {
+        for (var i = 0; i < department.length; i++) {
+            departmentName.push(department[i].department_name);
+        }
+        return Promise.all([department]);
+    })
+}
