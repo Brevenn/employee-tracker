@@ -143,6 +143,28 @@ function addCharRole() {
                 message: "Department for this Role: ",
                 choices: departmentName
             }
-        ]).then(answers => )
+        ]).then(answers => {
+            let departmentID;
+
+            for (var i = 0; i < answers.length; i++) {
+                if (answers.department === department[i].department_name) {
+                    departmentID = department[i].id;
+                }
+            }
+
+            connection.query(
+                "INSERT INTO employee_role SET ?",
+                {
+                    title: answers.role,
+                    berries: answers.berries,
+                    department_id: departmentID
+                },
+                function (err) {
+                    if (err) throw err;
+                    console.log("Employee Role added successfully!");
+                    start();
+                }
+            );
+        })
     })
-}
+};
