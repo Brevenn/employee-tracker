@@ -1,0 +1,25 @@
+{
+  "name": "employee-tracker",
+  "version": "1.0.0",
+  "description": "application that allows the user to track one piece characters",
+  "main": "employeestats.js",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "inquirer": "^7.3.2",
+    "mysql": "^2.18.1",
+    "promise-mysql": "^4.1.3"
+  },
+  "scripts": {
+    "test": "Error: no test specified"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Brevenn/employee-tracker.git"
+  },
+  "author": "Charles Breven Glasgow",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Brevenn/employee-tracker/issues"
+  },
+  "homepage": "https://github.com/Brevenn/employee-tracker#readme"
+}
