@@ -110,4 +110,39 @@ function addCharRole() {
         }
         return Promise.all([department]);
     })
+    .then(([department]) => {
+        inquirer.prompt ([
+            {
+                type: "input",
+                name: "role",
+                message: "Add Employee Role: ",
+                validate: function(input){
+                    if (input === ""){
+                        console.log("Employee Role Required to Proceed");
+                        return false;
+                    }
+                    else {
+                        return true;
+                    }
+                }
+            },
+            {
+                type: "input",
+                name: "berries",
+                message: "Employee Role Berries: ",
+                validate: function(value) {
+                    if (isNaN(value) === false){
+                        return true;
+                    }
+                    return false;
+                }
+            },
+            {
+                type: "list",
+                name: "department",
+                message: "Department for this Role: ",
+                choices: departmentName
+            }
+        ]).then(answers => )
+    })
 }
