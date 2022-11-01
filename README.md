@@ -30,7 +30,7 @@
 
 - **[Javascript](https://www.javascript.com/)**
 - **[Node.js](http://nodejs.org/en/)**
-- **[MySQl](https://www.mysql.com/)**
+- **[MySQL](https://www.mysql.com/)**
 
 #
 
