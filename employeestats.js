@@ -41,6 +41,31 @@ function start() {
             }
         ])
         .then(answers => {
-            
-        })
-}
+            switch(answers.beginningOptions) {
+                case "Add New Character Type":
+                    addCharType();
+                    break;
+                case "Add New Character Role":
+                    addCharRole();
+                    break;
+                case "Add New Character":
+                    addNewChar();
+                    break;
+                case "View All Character Types":
+                    viewCharTypes();
+                    break;
+                case "View All Character Roles":
+                    viewCharRoles();
+                    break;
+                case "View All Characters":
+                    viewAllChar();
+                    break;
+                case "Change the Role of a Character":
+                    changeRole();
+                    break;
+                default:
+                    console.log("Until Next Time!");
+                    process.exit();
+            };
+        });
+};
