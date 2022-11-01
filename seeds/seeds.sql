@@ -15,4 +15,21 @@ VALUES (1, "Captain", 850000000, 1),
        (6, "Current", 650000000, 4)
        (7, "Former", 450000000, 4),
        (8, "Pirate", 300000000, 5),
-       (9, "Bystander", 500, 6)
+       (9, "Bystander", 500, 6);
+
+INSERT INTO character_info (id, first_name, last_name, role_id)
+VALUES (1, "Monkey D.", "Luffy", 3),
+       (2, "Roronoa", "Zoro", 2),
+       (3, "Marshall D.", "Teach", 3),
+       (4, "Charolette", "LinLin", 3),
+       (5, "Trafalgar D.", "Law", 1),
+       (6, "Eustass", "Kidd", 1),
+       (7, "Nico", "Robin", 8),
+       (8, "Vinsmoke", "Sanji", 8),
+       (9, "Dracule", "Mihawk", 7),
+       (10, "Donquixote", "Doflamingo", 6),
+       (11, "Sir", "Crocodile", 7),
+       (12, "Borsalino", "Kizaru", 4),
+       (13, "Sakazuki", "Akainu", 4),
+       (14, "Issho", "Fujitora", 5),
+       (15, "Kozuki", "Momonosuke", 9);
