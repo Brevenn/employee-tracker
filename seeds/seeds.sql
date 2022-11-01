@@ -1,3 +1,4 @@
+-- Create types for One Piece Characters.
 INSERT INTO department (id, department_name)
 VALUES (1, "Strong Pirate"),
        (2, "Emperor of the Sea"),
@@ -6,6 +7,7 @@ VALUES (1, "Strong Pirate"),
        (5, "Worst Generation"), 
        (6, "Civilian");
 
+-- Create roles for One Piece Characters.
 INSERT INTO employee_role (id, title, berries, department_id)
 VALUES (1, "Captain", 850000000, 1),
        (2, "Vice-Captain", 60000000, 1),
@@ -17,7 +19,8 @@ VALUES (1, "Captain", 850000000, 1),
        (8, "Pirate", 300000000, 5),
        (9, "Bystander", 500, 6);
 
-INSERT INTO character_info (id, first_name, last_name, role_id)
+-- Create information for One Piece Characters.
+INSERT INTO department_info (id, first_name, last_name, role_id)
 VALUES (1, "Monkey D.", "Luffy", 3),
        (2, "Roronoa", "Zoro", 2),
        (3, "Marshall D.", "Teach", 3),

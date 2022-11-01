@@ -21,8 +21,8 @@ CREATE TABLE employee_role (
     FOREIGN KEY (department_id) REFERENCES department(id) ON DELETE CASCADE
 );
 
--- create data table for characters.
-CREATE TABLE character_info (
+-- create table for characters.
+CREATE TABLE department_info (
     id INT NOT NULL AUTO_INCREMENT,
     first_name VARCHAR(30) NOT NULL,
     last_name VARCHAR(30) NOT NULL,
@@ -30,5 +30,6 @@ CREATE TABLE character_info (
     captain_id INT,
     PRIMARY KEY (id),
     FOREIGN KEY (role_id) REFERENCES employee_role(id) ON DELETE CASCADE,
-    FOREIGN KEY (captain_id) REFERENCES character_info(id) ON DELETE CASCADE
+    FOREIGN KEY (captain_id) REFERENCES department_info(id) ON DELETE CASCADE
+
 );

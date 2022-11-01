@@ -69,3 +69,26 @@ function start() {
             };
         });
 };
+
+// Create a function to add character types to the type seed.
+function addCharType() {
+    inquirer.prompt([
+        {
+            type: "input",
+            name: "department type",
+            message: "Add Department Type: "
+        }
+    ]).then(answers => {
+        connection.query(
+            "INSERT INTO department SET?",
+            {
+                department_name: answers.department,
+            },
+            function(err) {
+                if (err) throw err;
+                console.log("New Department added to database");
+                start();
+            }
+        );
+    });
+};
