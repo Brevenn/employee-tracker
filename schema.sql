@@ -11,7 +11,7 @@ CREATE TABLE department (
     PRIMARY KEY (id)
 );
 
--- create table for character roles.
+-- create data table for character roles.
 CREATE TABLE employee_role (
     id INT NOT NULL AUTO_INCREMENT,
     title CARCHAR(30) NOT NULL,
@@ -21,7 +21,7 @@ CREATE TABLE employee_role (
     FOREIGN KEY (department_id) REFERENCES department(id) ON DELETE CASCADE
 );
 
--- create table for characters.
+-- create data table for characters.
 CREATE TABLE character_info (
     id INT NOT NULL AUTO_INCREMENT,
     first_name VARCHAR(30) NOT NULL,
@@ -31,5 +31,4 @@ CREATE TABLE character_info (
     PRIMARY KEY (id),
     FOREIGN KEY (role_id) REFERENCES employee_role(id) ON DELETE CASCADE,
     FOREIGN KEY (captain_id) REFERENCES character_info(id) ON DELETE CASCADE
-
 );

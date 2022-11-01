@@ -31,6 +31,7 @@
 - **[Javascript](https://www.javascript.com/)**
 - **[Node.js](http://nodejs.org/en/)**
 - **[MySQL](https://www.mysql.com/)**
+- **[Promise-MySQL](https://www.npmjs.com/package/promise-mysql)**
 
 #
 
