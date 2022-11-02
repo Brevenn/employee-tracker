@@ -72,8 +72,27 @@ function start() {
 
 // Create a function to view all character types (departments)
 function viewCharTypes() {
-    connection.query("SELECT department.id, department.department_name, SUM(employee_role.salary)")
+  connection.query(
+    "SELECT department.id, department.department_name, SUM(employee_role.salary) AS utilized_budget FROM employee LEFT JOIN employee_role on employee.role_id = employee.role_id LEFT JOIN department on employee_role.department_id = department.id GROUP by department.id, department.department_name;",
+    function (err, results) {
+      if (err) throw err;
+      console.table(results);
+      start();
+    }
+  );
 }
+
+// Create a function function to view all characters (employees)
+function viewAllChar() {
+  connection.query(
+    "SELECT employee.id, employee.first_name, employee.last_name, employee_role.title, employee_role.salary FROM employeetracker_db.employee LEFT JOIN employee_role on employee_role.id = employee.role_id",
+    function (err, results) {
+      if (err) throw err;
+      console.table(results);
+      start();
+    }
+  );
+};
 
 // Create a function to add character types to the type seed.
 function addCharType() {
@@ -133,8 +152,8 @@ function addCharRole() {
           },
           {
             type: "input",
-            name: "berries",
-            message: "Employee Role Berries: ",
+            name: "salary",
+            message: "Employee Role Salary: ",
             validate: function (value) {
               if (isNaN(value) === false) {
                 return true;
@@ -162,7 +181,7 @@ function addCharRole() {
             "INSERT INTO employee_role SET ?",
             {
               title: answers.role,
-              berries: answers.berries,
+              berries: answers.salary,
               department_id: departmentID,
             },
             function (err) {
@@ -180,101 +199,97 @@ function addNewChar() {
   let employeeRole = [];
   let employees = [];
 
-  promisemysql.createConnection(connectPack).then((dbconnection) => {
-    return Promise.all([
-      dbconnection.query("SELECT * FROM employee_role"),
+  promisemysql
+    .createConnection(connectPack)
+    .then((dbconnection) => {
+      return Promise.all([
+        dbconnection.query("SELECT * FROM employee_role"),
 
-      dbconnection.query(
-        "SELECT employee.id, concat(employee.first_name, ' ' , employee.last_name) AS fullName FROM employee ORDER BY fullName ASC"
-      )
-    ]);
-  })
-  .then(([role, name]) => {
-    for (var i = 0; i < role.length; i++) {
+        dbconnection.query(
+          "SELECT employee.id, concat(employee.first_name, ' ' , employee.last_name) AS fullName FROM employee ORDER BY fullName ASC"
+        ),
+      ]);
+    })
+    .then(([role, name]) => {
+      for (var i = 0; i < role.length; i++) {
         employeeRole.push(role[i].title);
-    }
+      }
 
-    for (var i = 0; i < name.length; i++) {
-        employees.push(name[i].fullName)
-    }
+      for (var i = 0; i < name.length; i++) {
+        employees.push(name[i].fullName);
+      }
 
-    return Promise.all(([role,name]));
-  })
-  .then(([role,name]) => {
+      return Promise.all([role, name]);
+    })
+    .then(([role, name]) => {
+      employees.push("null");
 
-    employees.push('null')
-
-    inquirer.prompt([
-        {
+      inquirer
+        .prompt([
+          {
             type: "input",
             name: "firstname",
             message: "First Name: ",
-            validate: function(input){
-                if (input === ""){
-                    console.log("First Name Required");
-                    return false;
-                }
-                else {
-                    return true;
-                }
-            }
-        },
-        {
+            validate: function (input) {
+              if (input === "") {
+                console.log("First Name Required");
+                return false;
+              } else {
+                return true;
+              }
+            },
+          },
+          {
             type: "input",
             name: "lastname",
             message: "Last Name: ",
-            validate: function(input) {
-                if (input === ""){
-                    console.log("Last Name Required");
-                    return false;
-                }
-                else {
-                    return true;
-                }
-            }
-        },
-        {
+            validate: function (input) {
+              if (input === "") {
+                console.log("Last Name Required");
+                return false;
+              } else {
+                return true;
+              }
+            },
+          },
+          {
             type: "list",
             name: "currentRole",
             message: "Role within the company: ",
-            choices: employeeRole
-        },
-        {
+            choices: employeeRole,
+          },
+          {
             type: "list",
             name: "manager",
             message: "Name of their manager: ",
-            choices: employees
-        }
-    ]).tehn(answer => {
+            choices: employees,
+          },
+        ])
+        .tehn((answer) => {
+          let roleID;
 
-        let roleID;
+          let managerID = null;
 
-        let managerID = null;
-
-        for (var i = 0; i < roleID.length; i++) {
+          for (var i = 0; i < roleID.length; i++) {
             if (answers.manager == name[i].fullName) {
-                managerID = name[i].id;
+              managerID = name[i].id;
             }
-        }
+          }
 
-        connection.query(
+          connection.query(
             "INSERT INTO employee SET ?",
             {
-                first_name: answers.firstname,
-                last_name: answers.lastname,
-                role_id: roleID,
-                manager_id: managerID
+              first_name: answers.firstname,
+              last_name: answers.lastname,
+              role_id: roleID,
+              manager_id: managerID,
             },
-            function(err){
-                if (err) throw err;
-                console.log("Employee added successfully");
-                start();
+            function (err) {
+              if (err) throw err;
+              console.log("Employee added successfully");
+              start();
             }
-        );
+          );
+        });
     });
-  })
-};
-
-
-
-
+}

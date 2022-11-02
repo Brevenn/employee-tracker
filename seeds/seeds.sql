@@ -8,7 +8,7 @@ VALUES (1, "Strong Pirate"),
        (6, "Civilian");
 
 -- Create roles for One Piece Characters.
-INSERT INTO employee_role (id, title, berries, department_id)
+INSERT INTO employee_role (id, title, salary, department_id)
 VALUES (1, "Captain", 850000000, 1),
        (2, "Vice-Captain", 60000000, 1),
        (3, "The Big 5", 4000000000, 2),
