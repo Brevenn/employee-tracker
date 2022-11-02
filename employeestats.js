@@ -70,6 +70,11 @@ function start() {
     });
 }
 
+// Create a function to view all character types (departments)
+function viewCharTypes() {
+    connection.query("SELECT department.id, department.department_name, SUM(employee_role.salary)")
+}
+
 // Create a function to add character types to the type seed.
 function addCharType() {
   inquirer
@@ -195,4 +200,81 @@ function addNewChar() {
 
     return Promise.all(([role,name]));
   })
-}
+  .then(([role,name]) => {
+
+    employees.push('null')
+
+    inquirer.prompt([
+        {
+            type: "input",
+            name: "firstname",
+            message: "First Name: ",
+            validate: function(input){
+                if (input === ""){
+                    console.log("First Name Required");
+                    return false;
+                }
+                else {
+                    return true;
+                }
+            }
+        },
+        {
+            type: "input",
+            name: "lastname",
+            message: "Last Name: ",
+            validate: function(input) {
+                if (input === ""){
+                    console.log("Last Name Required");
+                    return false;
+                }
+                else {
+                    return true;
+                }
+            }
+        },
+        {
+            type: "list",
+            name: "currentRole",
+            message: "Role within the company: ",
+            choices: employeeRole
+        },
+        {
+            type: "list",
+            name: "manager",
+            message: "Name of their manager: ",
+            choices: employees
+        }
+    ]).tehn(answer => {
+
+        let roleID;
+
+        let managerID = null;
+
+        for (var i = 0; i < roleID.length; i++) {
+            if (answers.manager == name[i].fullName) {
+                managerID = name[i].id;
+            }
+        }
+
+        connection.query(
+            "INSERT INTO employee SET ?",
+            {
+                first_name: answers.firstname,
+                last_name: answers.lastname,
+                role_id: roleID,
+                manager_id: managerID
+            },
+            function(err){
+                if (err) throw err;
+                console.log("Employee added successfully");
+                start();
+            }
+        );
+    });
+  })
+};
+
+
+
+
