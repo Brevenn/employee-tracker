@@ -92,6 +92,17 @@ function viewAllChar() {
       start();
     }
   );
+}
+// Creat a function to view all character roles (employee roles)
+function viewCharRoles() {
+  connection.query(
+    "SELECT employee_role.id, employee_role.title, department.department_name AS department, employee_role.salary FROM employee_role LEFT JOIN department on employee_role.department_id = department.id;",
+    function (err, results) {
+      if (err) throw err;
+      console.table(results);
+      start();
+    }
+  );
 };
 
 // Create a function to add character types to the type seed.
