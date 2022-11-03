@@ -3,6 +3,7 @@ var inquirer = require("inquirer");
 var promisemysql = require("promise-mysql");
 var mysql = require("mysql");
 const { start } = require("repl");
+const { resolve } = require("bluebird");
 require("console.table");
 
 // create connection to both mysql packages
@@ -304,3 +305,64 @@ function addNewChar() {
         });
     });
 }
+
+// Create a function to change the role of a character
+function changeRole() {
+
+    let employeeRole = [];
+    let employees = [];
+
+    promisemysql.createConnection(connectPack)
+    .then((dbconnection) => {
+        return Promise.all([
+            dbconnection.query("SELECT * FROM employee_role"),
+            dbconnection.query("SELECT eemployee.id, concat(employee.first_name. ' ' , employee.last_name) AS fullName FROM employee ORDER BY fullName ASC")
+        ]);
+    })
+    .then(([role,name]) => {
+        for (var i = 0; i < role.length; i++) {
+            employeeRole.push(role[i].title);
+        }
+        for (var i = 0; i < employees.length; i++) {
+            employees.push(name[i].fullName)
+        }
+        return Promise.all([role,name]);
+    })
+    .then(([role, name]) => {
+        inquirer.prompt([
+            {
+                type: "list",
+                name: "employeeName",
+                message: "Employee Name: ",
+                choices: employees
+            },
+            {
+                type: "list",
+                name: "currentRole",
+                message: "New Role: ",
+                choices: employeeRole
+            }
+        ]).then(answers => {
+            let roleID;
+            let employeeID;
+            for (var i = 0; i < role.length; i++) {
+                if (answers.currentRole == role[i].title) {
+                    roleID = role[i].id;
+                }
+            }
+            for (var i = 0; i < name.length; i++) {
+                if (answers.employeeName == name[i].fullName) {
+                    employeeID = name[i].id;
+                }
+            }
+            connection.query(
+                `UPDATE employee SET role_id = ${roleID}, WHERE id = ${employeeID}`,
+                function(err) {
+                    if (err) throw err;
+                    console.log("Employee role changed succcessfully");
+                    start();
+                }
+            );
+        });
+    })
+};
