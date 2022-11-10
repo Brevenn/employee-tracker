@@ -73,26 +73,20 @@ function start() {
 
 // Create a function to view all character types (departments)
 function viewCharTypes() {
-  connection.query(
-    "SELECT * FROM department;",
-    function (err, results) {
-      if (err) throw err;
-      console.table(results);
-      start();
-    }
-  );
+  connection.query("SELECT * FROM department;", function (err, results) {
+    if (err) throw err;
+    console.table(results);
+    start();
+  });
 }
 
 // Create a function function to view all characters (employees)
 function viewAllChar() {
-  connection.query(
-    "SELECT * FROM department_info;",
-    function (err, results) {
-      if (err) throw err;
-      console.table(results);
-      start();
-    }
-  );
+  connection.query("SELECT * FROM department_info;", function (err, results) {
+    if (err) throw err;
+    console.table(results);
+    start();
+  });
 }
 // Creat a function to view all character roles (employee roles)
 function viewCharRoles() {
@@ -142,7 +136,6 @@ function addCharRole() {
       return dbconnection.query("SELECT * FROM department");
     })
     .then(([department]) => {
-      console.log(333, department);
       departments = department;
       for (var i = 0; i < department.length; i++) {
         departmentName.push(department[i].department_name);
@@ -151,7 +144,6 @@ function addCharRole() {
       return departmentName;
     })
     .then((departmentNames) => {
-      console.log(222, departmentNames);
       inquirer
         .prompt([
           {
@@ -187,11 +179,9 @@ function addCharRole() {
         ])
         .then((answers) => {
           let departmentID;
-          console.log(111, answers);
-          departmentID =
-            departments.find(
-              (department) => department.department_name === answers.department
-            ).id;
+          departmentID = departments.find(
+            (department) => department.department_name === answers.department
+          ).id;
 
           connection.query(
             "INSERT INTO employee_role SET ?",
@@ -239,7 +229,6 @@ function addNewChar() {
     })
     .then(([role, name]) => {
       roles = role;
-      console.log(222, employees);
       inquirer
         .prompt([
           {
@@ -282,9 +271,9 @@ function addNewChar() {
           },
         ])
         .then((answer) => {
-          let roleID = roles.find(role => {
-            return role.title === answer.currentRole
-          }).id
+          let roleID = roles.find((role) => {
+            return role.title === answer.currentRole;
+          }).id;
 
           let managerID = null;
 
@@ -332,10 +321,9 @@ function changeRole() {
         employeeRole.push(role[i].title);
       }
       for (var i = 0; i < name.length; i++) {
-        console.log(name[i])
+        console.log(name[i]);
         employees.push(name[i].fullName);
       }
-      console.log(employees, 333)
       return Promise.all([role, name]);
     })
     .then(([role, name]) => {

@@ -35,4 +35,4 @@ VALUES (1, "Monkey D.", "Luffy", 3),
        (12, "Borsalino", "Kizaru", 3),
        (13, "Sakazuki", "Akainu", 3),
        (14, "Issho", "Fujitora", 3),
-       (15, "Kozuki", "Momonosuke", 1);
+       (15, "Kozuki", "Momonosuke", );
