@@ -14,14 +14,15 @@ CREATE TABLE department (
 -- create data table for character roles.
 CREATE TABLE employee_role (
     id INT NOT NULL AUTO_INCREMENT,
-    title CARCHAR(30) NOT NULL,
-    berries DECIMAL NOT NULL,
+    title VARCHAR(30) NOT NULL,
+    salary DECIMAL NOT NULL,
     department_id INT NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (department_id) REFERENCES department(id) ON DELETE CASCADE
 );
 
 -- create table for characters.
+DROP TABLE IF EXISTS department_info;
 CREATE TABLE department_info (
     id INT NOT NULL AUTO_INCREMENT,
     first_name VARCHAR(30) NOT NULL,

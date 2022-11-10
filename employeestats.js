@@ -1,18 +1,17 @@
 // create requirements for dependencies
+require("dotenv").config();
 var inquirer = require("inquirer");
-var promisemysql = require("promise-mysql");
-var mysql = require("mysql");
-const { start } = require("repl");
-const { resolve } = require("bluebird");
+var promisemysql = require("mysql2/promise");
+var mysql = require("mysql2");
 require("console.table");
 
 // create connection to both mysql packages
 var connectPack = {
   host: "localhost",
   port: 3306,
-  user: "root",
-  password: "root",
-  database: "employeetracker_db",
+  user: process.env.DB_USER,
+  password: process.env.DB_PW,
+  database: process.env.DB_NAME,
 };
 
 var connection = mysql.createConnection(connectPack);
@@ -42,6 +41,7 @@ function start() {
       },
     ])
     .then((answers) => {
+      console.log(answers.beginningOptions);
       switch (answers.beginningOptions) {
         case "Add New Department Type":
           addCharType();
@@ -52,13 +52,13 @@ function start() {
         case "Add New Department":
           addNewChar();
           break;
-        case "View All Department Types":
+        case "View all Department Types":
           viewCharTypes();
           break;
-        case "View All Department Roles":
+        case "View all Department Roles":
           viewCharRoles();
           break;
-        case "View All Departments":
+        case "View all Departments":
           viewAllChar();
           break;
         case "Change the Role of a Department":
@@ -74,7 +74,7 @@ function start() {
 // Create a function to view all character types (departments)
 function viewCharTypes() {
   connection.query(
-    "SELECT department.id, department.department_name, SUM(employee_role.salary) AS utilized_budget FROM employee LEFT JOIN employee_role on employee.role_id = employee.role_id LEFT JOIN department on employee_role.department_id = department.id GROUP by department.id, department.department_name;",
+    "SELECT * FROM department;",
     function (err, results) {
       if (err) throw err;
       console.table(results);
@@ -86,7 +86,7 @@ function viewCharTypes() {
 // Create a function function to view all characters (employees)
 function viewAllChar() {
   connection.query(
-    "SELECT employee.id, employee.first_name, employee.last_name, employee_role.title, employee_role.salary FROM employeetracker_db.employee LEFT JOIN employee_role on employee_role.id = employee.role_id",
+    "SELECT * FROM department_info;",
     function (err, results) {
       if (err) throw err;
       console.table(results);
@@ -104,7 +104,7 @@ function viewCharRoles() {
       start();
     }
   );
-};
+}
 
 // Create a function to add character types to the type seed.
 function addCharType() {
@@ -112,11 +112,12 @@ function addCharType() {
     .prompt([
       {
         type: "input",
-        name: "department type",
+        name: "department",
         message: "Add Department Type: ",
       },
     ])
     .then((answers) => {
+      // console.log(answers);
       connection.query(
         "INSERT INTO department SET?",
         {
@@ -134,19 +135,23 @@ function addCharType() {
 // Create a function to add roles to the employee_role database.
 function addCharRole() {
   let departmentName = [];
-
+  let departments = [];
   promisemysql
     .createConnection(connectPack)
     .then((dbconnection) => {
-      return Promise.all([dbconnection.query("SELECT * FROM department")]);
+      return dbconnection.query("SELECT * FROM department");
     })
     .then(([department]) => {
+      console.log(333, department);
+      departments = department;
       for (var i = 0; i < department.length; i++) {
         departmentName.push(department[i].department_name);
       }
-      return Promise.all([department]);
+      // console.log(departmentName)
+      return departmentName;
     })
-    .then(([department]) => {
+    .then((departmentNames) => {
+      console.log(222, departmentNames);
       inquirer
         .prompt([
           {
@@ -177,23 +182,22 @@ function addCharRole() {
             type: "list",
             name: "department",
             message: "Department for this Role: ",
-            choices: departmentName,
+            choices: departmentNames,
           },
         ])
         .then((answers) => {
           let departmentID;
-
-          for (var i = 0; i < answers.length; i++) {
-            if (answers.department === department[i].department_name) {
-              departmentID = department[i].id;
-            }
-          }
+          console.log(111, answers);
+          departmentID =
+            departments.find(
+              (department) => department.department_name === answers.department
+            ).id;
 
           connection.query(
             "INSERT INTO employee_role SET ?",
             {
               title: answers.role,
-              berries: answers.salary,
+              salary: answers.salary,
               department_id: departmentID,
             },
             function (err) {
@@ -210,32 +214,32 @@ function addCharRole() {
 function addNewChar() {
   let employeeRole = [];
   let employees = [];
-
+  let roles = [];
   promisemysql
     .createConnection(connectPack)
     .then((dbconnection) => {
       return Promise.all([
         dbconnection.query("SELECT * FROM employee_role"),
-
         dbconnection.query(
-          "SELECT employee.id, concat(employee.first_name, ' ' , employee.last_name) AS fullName FROM employee ORDER BY fullName ASC"
+          "SELECT department_info.id, concat(department_info.first_name, ' ' , department_info.last_name) AS fullName FROM department_info ORDER BY fullName ASC"
         ),
       ]);
     })
-    .then(([role, name]) => {
+    .then(([[role], [name]]) => {
       for (var i = 0; i < role.length; i++) {
         employeeRole.push(role[i].title);
       }
 
       for (var i = 0; i < name.length; i++) {
+        console.log(name[i]);
         employees.push(name[i].fullName);
       }
 
       return Promise.all([role, name]);
     })
     .then(([role, name]) => {
-      employees.push("null");
-
+      roles = role;
+      console.log(222, employees);
       inquirer
         .prompt([
           {
@@ -277,24 +281,26 @@ function addNewChar() {
             choices: employees,
           },
         ])
-        .tehn((answer) => {
-          let roleID;
+        .then((answer) => {
+          let roleID = roles.find(role => {
+            return role.title === answer.currentRole
+          }).id
 
           let managerID = null;
 
-          for (var i = 0; i < roleID.length; i++) {
-            if (answers.manager == name[i].fullName) {
-              managerID = name[i].id;
+          for (var i = 0; i < name.length; i++) {
+            if (answer.manager == name[i].fullName) {
+              captainID = name[i].id;
             }
           }
 
           connection.query(
-            "INSERT INTO employee SET ?",
+            "INSERT INTO department_info SET ?",
             {
-              first_name: answers.firstname,
-              last_name: answers.lastname,
+              first_name: answer.firstname,
+              last_name: answer.lastname,
               role_id: roleID,
-              manager_id: managerID,
+              captain_id: captainID,
             },
             function (err) {
               if (err) throw err;
@@ -308,61 +314,67 @@ function addNewChar() {
 
 // Create a function to change the role of a character
 function changeRole() {
+  let employeeRole = [];
+  let employees = [];
 
-    let employeeRole = [];
-    let employees = [];
-
-    promisemysql.createConnection(connectPack)
+  promisemysql
+    .createConnection(connectPack)
     .then((dbconnection) => {
-        return Promise.all([
-            dbconnection.query("SELECT * FROM employee_role"),
-            dbconnection.query("SELECT eemployee.id, concat(employee.first_name. ' ' , employee.last_name) AS fullName FROM employee ORDER BY fullName ASC")
-        ]);
+      return Promise.all([
+        dbconnection.query("SELECT * FROM employee_role"),
+        dbconnection.query(
+          "SELECT department_info.id, concat(department_info.first_name, ' ' , department_info.last_name) AS fullName FROM department_info ORDER BY fullName ASC"
+        ),
+      ]);
     })
-    .then(([role,name]) => {
-        for (var i = 0; i < role.length; i++) {
-            employeeRole.push(role[i].title);
-        }
-        for (var i = 0; i < employees.length; i++) {
-            employees.push(name[i].fullName)
-        }
-        return Promise.all([role,name]);
+    .then(([[role], [name]]) => {
+      for (var i = 0; i < role.length; i++) {
+        employeeRole.push(role[i].title);
+      }
+      for (var i = 0; i < name.length; i++) {
+        console.log(name[i])
+        employees.push(name[i].fullName);
+      }
+      console.log(employees, 333)
+      return Promise.all([role, name]);
     })
     .then(([role, name]) => {
-        inquirer.prompt([
-            {
-                type: "list",
-                name: "employeeName",
-                message: "Employee Name: ",
-                choices: employees
-            },
-            {
-                type: "list",
-                name: "currentRole",
-                message: "New Role: ",
-                choices: employeeRole
+      inquirer
+        .prompt([
+          {
+            type: "list",
+            name: "employeeName",
+            message: "Employee Name: ",
+            choices: employees,
+          },
+          {
+            type: "list",
+            name: "currentRole",
+            message: "New Role: ",
+            choices: employeeRole,
+          },
+        ])
+        .then((answers) => {
+          let roleID;
+          let employeeID;
+          for (var i = 0; i < role.length; i++) {
+            if (answers.currentRole == role[i].title) {
+              roleID = role[i].id;
             }
-        ]).then(answers => {
-            let roleID;
-            let employeeID;
-            for (var i = 0; i < role.length; i++) {
-                if (answers.currentRole == role[i].title) {
-                    roleID = role[i].id;
-                }
+          }
+          for (var i = 0; i < name.length; i++) {
+            if (answers.employeeName == name[i].fullName) {
+              employeeID = name[i].id;
             }
-            for (var i = 0; i < name.length; i++) {
-                if (answers.employeeName == name[i].fullName) {
-                    employeeID = name[i].id;
-                }
+          }
+          connection.query(
+            `UPDATE department_info SET role_id = ${roleID} WHERE id = ${employeeID}`,
+            function (err) {
+              if (err) throw err;
+              console.log("Employee role changed succcessfully");
+              start();
             }
-            connection.query(
-                `UPDATE employee SET role_id = ${roleID}, WHERE id = ${employeeID}`,
-                function(err) {
-                    if (err) throw err;
-                    console.log("Employee role changed succcessfully");
-                    start();
-                }
-            );
+          );
         });
-    })
-};
+    });
+}
