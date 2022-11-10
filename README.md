@@ -2,9 +2,9 @@
 
 #
 
-### *Description:*
+## *Description:*
 
-****
+**Want an easy app to track your employees? Well in this repository I have created an application using a SQL database to manage employees, departments and roles. I've also added a little flare by replacing the employee data with One Piece Characters!(For my Anime fans out there) and the application is fully functioning so navigating through the prompts should be a breeze!**
 
 #
 
@@ -16,15 +16,15 @@
 
 #
 
-## **Usage:**
+### **Usage:**
 
-### *Installation and Requirements to Begin*
+#### *Installation and Requirements to Begin:*
 
 * The User will navigate to the file explorer and open the integrated terminal.
 * In the command-line the user will run `npm i` to install the necessary packages and dependencies.
 * The user will follow with `npm start` to begin the SQL based application.
 
-### *Prompts*
+#### *Prompts:*
 
 The following prompts will appear when the user begins the application:
 
